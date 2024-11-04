@@ -2,7 +2,7 @@
 ## First Person - Survival?
 
 ### Initial Concept Sketches
-![Game Layout Sketch 1]
+![Game Layout Sketch 1](https://github.com/avivpilipski/KZgameDesign/blob/main/gameDesign.jpg)
 *Sketch Description: First-person view showing a room with:*
 - Standing figure in foreground
 - Circular marker/sign post
@@ -14,7 +14,6 @@
 - Turn-based mechanics with triggers
 
 ### Room Layout Concepts
-![Top-down Layout Sketch]
 *Sketch Description: Top-down view of room layout showing:*
 - Square/rectangular rooms
 - Door placements
@@ -25,8 +24,6 @@
 
 ### Core Objective
 "Find a way to escape this place before..."
-
-![Character Perspective Sketch]
 *Sketch Description: Side-view character sketch showing:*
 - Figure in rain or atmospheric effect
 - Simple geometric environment
@@ -39,7 +36,6 @@
 - "Punishment if you talk to human with time involved"
 
 ### Map Concepts
-![Room Layout Grid]
 *Sketch Description: Grid-based room layout showing:*
 - Square rooms connected by passages
 - Door placement options
