@@ -1,126 +1,56 @@
-// THIS IS NOT WHAT I"M TRYING TO DO
 
 # Game Design
-## First Person - Survival?
+## First Person - Survival
+# game inspirations(very helpful to see; order of influence?):
+- House
+- Rusty Lake series(including cube escape)
+- Don't Escape series(especially 2)
+- Bad Dream series
+
 
 ### Initial Concept Sketches
 ![Game Layout Sketch 1](https://github.com/avivpilipski/KZgameDesign/blob/main/gameDesign.jpg)
 *Sketch Description: First-person view showing a room with:*
 - Standing figure in foreground
-- Circular marker/sign post
-- Simple geometric room layout
-- Door or passage indicators
+- Circular marker/sign post to track if the monster is behind the player
 
-### Silent Movement
-- Movement through different sized maps
-- Turn-based mechanics with triggers
+### features
+- timed gameplay; game will automatically fail after a certain amount of time (easier mode = more time)
+- exterior and interior map will change based on time progression
+- an inventory to hold items
+- conversation with npc to gather information and trigger events
+- a monster will spawn randomly inside the game. 
+- multiple endings
+- no save system
 
-### Room Layout Concepts
-*Sketch Description: Top-down view of room layout showing:*
-- Square/rectangular rooms
-- Door placements
-- Movement grid pattern
-- Notes indicating "smaller maps loop up"
-- Annotation: "Quiet time, don't escape!"
-- Additional note: "Deep Sleep"
+### Exterior map layout
+- a top down view map with possible locations to go
+- possible locations include: home, tba, etc. 
+- player starts in the home
+
+### Interior Map Concepts
+- point and click game
+- flat: 2 main directions: left(turn left), right (turn right)
+- occasional: up (look upward), down (look downward)
+- arrows in map (move front & move back)
+- interactive objects
 
 ### Core Objective
 "Find a way to escape this place before..."
 *Sketch Description: Side-view character sketch showing:*
-- Figure in rain or atmospheric effect
-- Simple geometric environment
-- Directional indicators
-- Note: "Flash -> camera trigger"
-
-### Movement Rules
-*From original notes:*
-- "More destruction with triggers as time goes on"
-- "Punishment if you talk to human with time involved"
-
-### Map Concepts
-*Sketch Description: Grid-based room layout showing:*
-- Square rooms connected by passages
-- Door placement options
-- Movement path indicators
-- Note: "only 1 block death after time"
-- Multiple pathway options
-
-### Escape Mechanics
-- "How to escape:"
-  - Save map usage
-  - Full exploration required
-  - Timing system to track progress
-  - "Be more generous"
-
-### Key Features
-*As written in notes:*
-- "Flash" camera trigger mechanics
-- "Save points every time you want to save this part"
-- "If you don't take your time, it's weapon or you have died!"
-- "Complex trigger system"
-
-### Resource Management
-- "Gather resources"
-- "Gather info"
-- "New ways unlock after studying"
-
-### Time-Based Elements
-- "Some major time only after specific time"
-- "Only 1 block death after time & find wrong way"
-- Look around mechanics
-- Multiple endings (don't escape)
+- leave the town 
+- don't die
 
 ### Environment Design
 Based on the sketches:
 - First-person viewpoint rooms (as shown in top sketch)
-- Turn-based movement grid (illustrated in map layouts)
-- Interactive elements like:
-  - Doors (shown in multiple sketches)
-  - Standing markers (circular indicators in first-person view)
-  - Environmental objects
-
-### Map Features
-From the sketched layouts:
-- Square/grid-based movement (as shown in bottom sketches)
-- Door placement systems
-- Interactive object positions
-- Multiple pathways
-
-### Additional Notes
-*Direct quotes from sketches:*
-- "Must have 12 human style"
-- "Different save maps"
-- "Purpose: Find a way to escape this place"
-- "Some major time only after specific time"
-
-## Level Design Elements
-Based on the drawings:
-- Grid-based movement system (illustrated in multiple sketches)
-- Door placement for navigation
-- Standing points for character positioning
-- Interactive elements placement
-- Multiple room configurations:
-  - Small confined spaces
-  - Larger exploration areas
-  - Strategic save point locations
-
-### Navigation Systems
-- Turn-based movement
-- Grid alignment (as shown in layout sketches)
-- Door interactions
-- Path choices
+- rather more gloomy atmosphere
 
 *Note: All sketch descriptions refer to the original notebook images and maintain the hand-drawn nature of the concept art while documenting the design intentions.*
 
 ## Design Analysis & Suggestions
 
 ### Potential Design Gaps
-
-#### Core Mechanics Clarity
-- The "quiet time, don't escape" mechanic needs more specific definition
-  - What happens during quiet time?
-  - Are there consequences for movement during these periods?
-  - How is the player informed of quiet time periods?
 
 #### Player Feedback Systems
 - Current design lacks clear indication of:
@@ -130,41 +60,6 @@ Based on the drawings:
   - Threat proximity
 - Suggestion: Add visual/audio cues for player state
 
-#### Save System Refinement
-- "Save points every time you want to save this part" needs structure:
-  - Limited save points for tension?
-  - Checkpoint system instead of free saves?
-  - Save point placement strategy?
-
-#### Time Mechanics Elaboration
-- Several time-based elements need connection:
-  - How does "deep sleep" advance time?
-  - What triggers time progression?
-  - How is time communicated to player?
-- Consider: Visual time indicators or environmental changes
-
-#### Resource System Details
-- Current "gather resources" concept needs:
-  - Specific resource types
-  - Resource management mechanics
-  - Usage scenarios
-  - Storage limitations
-  - Resource distribution strategy
-
-#### Player Navigation
-- Grid-based movement could benefit from:
-  - Clear movement rules
-  - Turn cost system
-  - Movement limitations
-  - Environmental hazards
-- Consider: Movement sound mechanics
-
-#### Interaction Framework
-- "Flash/camera trigger" system needs:
-  - Purpose definition
-  - Usage limitations
-  - Connection to core gameplay
-  - Feedback mechanisms
 
 #### Environmental Storytelling
 - Current design could expand on:
@@ -183,11 +78,6 @@ Based on the drawings:
 ### Suggested Additions
 
 #### Player Systems
-1. **Stress Meter**
-   - Affects movement speed
-   - Influences decision-making
-   - Triggers environmental changes
-
 2. **Discovery Mechanics**
    - Documentation finding
    - Environmental clues
@@ -205,25 +95,11 @@ Based on the drawings:
    - Threat indicators
 
 2. **Visual Feedback System**
-   - Status indicators
    - Environmental state changes
    - Interaction possibilities
 
-3. **Time Visualization**
-   - Day/night cycles
-   - Time pressure indicators
-   - Deadline visualization
-
-### Technical Considerations
-- How will the grid system handle:
-  - Diagonal movement?
-  - Multiple floor levels?
-  - Object interaction range?
-  - Line of sight mechanics?
-
 ### Quality of Life Features
 Consider adding:
-- Tutorial system
 - Objective tracker
 - Resource mapping
 - Help system
@@ -231,7 +107,6 @@ Consider adding:
 
 ### Risk Assessment
 Current design might face challenges with:
-- Player orientation in grid system
 - Time mechanic clarity
 - Save point frustration
 - Resource scarcity balance
