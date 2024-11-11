@@ -105,13 +105,16 @@
     - Methods:
         - *spawn()*
             - spawns the monster at a random position
+        - *killPlayer()*
+            - ends the game
     - <span style="color:purple">There is currently little in the design that explains the monster. Information on if the monster moves (and how it moves), if it has different states, and how it kills the player is needed.</span>
 6. Scene Class
     - Variables:
         - *name: String* - name of the scene
         - *background: String* - links to an image of the background
         - *objArr: InteractiveObject[]* - array of InteractiveObjects in the scene
-        - *navigationArrows: Scene[]* array of left, right, etc. scene
+        - *itemArr: Item[]* - array of items in the scene
+        - *navigationArrows: Scene[]* array of left, right, up, down scenes
     - Methods:
         - *constructor (name, background, objArr, navigationArrows)*
             - ints scene
@@ -125,13 +128,13 @@
     - Variables:
         - *remainingTime: int* - time left
         - *isRunning: boolean* - is the clock running
-        - *timeEvents: int, String (name of event)[]* - array of events that happen at certain times
+        - *timeEvents: int, String (name of event)[]* - map of events that happen at certain times
     - Methods:
-        - *startTimer()
+        - *startTimer()*
             - starts the timer
-        - *resumeTimer()
+        - *resumeTimer()*
             - resumes the timer
-        - *pauseTimer()
+        - *pauseTimer()*
             - pauses the timer    
         - *updateTime(deltaTime)*
             - changes the time 
@@ -140,12 +143,12 @@
             - <span style="color:purple">The design of these events is unclear- what are they, when do they happen, etc.</span>
 8. EventManager Class
     - Variables:
-        - *static events: Map(String, function)* - map of events
+        - *events: static Map(String, function)* - map of events and the functions they perform
     - Methods:
         - *triggerEvent(eventName)*
-            - Trigger a registered event
+            - Trigger a registered event- does whatever function is entailed
         - *update(deltaTime)*
-            - Update event states
+            - Update event states if necessary
         - <span style="color:purple">The design of these events is unclear- what are they, when do they happen, etc.</span>
 9. Position Class
     - Variables:
@@ -154,6 +157,7 @@
         - *ycord: int* - y-coordinate of location
     - Methods:
         - *constructor (isAccessible, xcord, ycord)*
+            - inits position
 10. InputManager Class
     - Variables:
         - *currentInput: Object* - input by the user
