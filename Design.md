@@ -7,6 +7,9 @@
 - Don't Escape series(especially 2)
 - Bad Dream series
 
+### goal
+- survive and escape the map through interactions under a certain amount of time
+
 
 ### Initial Concept Sketches
 ![Game Layout Sketch 1](https://github.com/avivpilipski/KZgameDesign/blob/main/gameDesign.jpg)
