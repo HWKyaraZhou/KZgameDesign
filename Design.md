@@ -32,6 +32,7 @@
 - point and click game
 - flat: 2 main directions: left(turn left), right (turn right)
 - occasional: up (look upward), down (look downward)
+- left/right/up/down clicks change the view of the character, but not its position
 - arrows in map (move front & move back)
 - interactive objects
 
