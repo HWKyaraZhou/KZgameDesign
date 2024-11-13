@@ -7,6 +7,9 @@
 - Don't Escape series(especially 2)
 - Bad Dream series
 
+### goal
+- Escape the level in the alloted time. You can click in different directions to move the player to a different room, finding hidden items and NPCs to talk to and gain information. The items and interactions will help the player gain access to new areas/items and eventually escape.
+
 
 ### Initial Concept Sketches
 ![Game Layout Sketch 1](https://github.com/avivpilipski/KZgameDesign/blob/main/gameDesign.jpg)
