@@ -9,6 +9,7 @@
 
 ### goal
 - Escape the level in the alloted time. You can click in different directions to move the player to a different room, finding hidden items and NPCs to talk to and gain information. The items and interactions will help the player gain access to new areas/items and eventually escape.
+- survive and escape the map through interactions under a certain amount of time
 
 
 ### Initial Concept Sketches
