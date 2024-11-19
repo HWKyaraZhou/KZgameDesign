@@ -2,18 +2,37 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Clickable Sections Game</title>
+    <title>Clickable Circles Game</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/pixi.js/7.2.4/pixi.min.js"></script>
     <style>
         body { margin: 0; display: flex; justify-content: center; align-items: center; height: 100vh; }
         canvas { border: 2px solid black; }
+        #popup {
+            position: absolute;
+            background: white;
+            border: 2px solid black;
+            padding: 20px;
+            display: none;
+            z-index: 100;
+            max-width: 300px;
+            text-align: center;
+        }
+        #popup-close {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            cursor: pointer;
+        }
     </style>
 </head>
 <body>
     <div id="gameCanvas"></div>
+    <div id="popup">
+        <span id="popup-close">✖</span>
+        <div id="popup-content"></div>
+    </div>
 
     <script>
-        // Game setup
         const app = new PIXI.Application({
             width: 800,
             height: 600,
@@ -21,64 +40,67 @@
         });
         document.getElementById('gameCanvas').appendChild(app.view);
 
-        // Define clickable sections
-        const sections = [
+        const popupElement = document.getElementById('popup');
+        const popupContent = document.getElementById('popup-content');
+        const popupClose = document.getElementById('popup-close');
+
+        function showPopup(message, x, y) {
+            popupContent.textContent = message;
+            popupElement.style.left = `${x + 10}px`;
+            popupElement.style.top = `${y + 10}px`;
+            popupElement.style.display = 'block';
+        }
+
+        function hidePopup() {
+            popupElement.style.display = 'none';
+        }
+
+        popupClose.addEventListener('click', hidePopup);
+
+        const circles = [
             {
-                name: 'Left Section',
-                x: 0,
-                y: 0,
-                width: 266,
-                height: 600,
+                name: 'Ancient Ruins',
+                x: 250,
+                y: 200,
+                radius: 100,
                 color: 0xFF0000,
-                onClick: () => {
-                    console.log('Left section clicked!');
-                    // Add your custom logic here
-                    document.body.style.backgroundColor = 'lightcoral';
-                }
+                description: 'Crumbling stone structures hint at a long-lost civilization.'
             },
             {
-                name: 'Middle Section',
-                x: 266,
-                y: 0,
-                width: 266,
-                height: 600,
+                name: 'Mystical Grove',
+                x: 550,
+                y: 300,
+                radius: 100,
                 color: 0x00FF00,
-                onClick: () => {
-                    console.log('Middle section clicked!');
-                    // Add your custom logic here
-                    document.body.style.backgroundColor = 'lightgreen';
-                }
+                description: 'Ethereal trees sway with an otherworldly energy, magical essence lingering in the air.'
             },
             {
-                name: 'Right Section',
-                x: 532,
-                y: 0,
-                width: 268,
-                height: 600,
+                name: 'Crystal Cavern',
+                x: 400,
+                y: 450,
+                radius: 100,
                 color: 0x0000FF,
-                onClick: () => {
-                    console.log('Right section clicked!');
-                    // Add your custom logic here
-                    document.body.style.backgroundColor = 'lightblue';
-                }
+                description: 'Glittering crystals reflect light in a mesmerizing underground chamber.'
             }
         ];
 
-        // Create interactive sections
-        sections.forEach(section => {
+        circles.forEach(circle => {
             const graphics = new PIXI.Graphics();
             
-            // Draw section with semi-transparent color
-            graphics.beginFill(section.color, 0.3);
-            graphics.drawRect(section.x, section.y, section.width, section.height);
+            // Fully transparent circle with white border
+            graphics.lineStyle(3, 0xFFFFFF, 1);
+            graphics.beginFill(circle.color, 0);
+            graphics.drawCircle(circle.x, circle.y, circle.radius);
             graphics.endFill();
 
-            // Make section interactive
             graphics.interactive = true;
             graphics.buttonMode = true;
-            graphics.on('pointerdown', section.onClick);
+            graphics.hitArea = new PIXI.Circle(circle.x, circle.y, circle.radius);
+            
+            graphics.on('pointerdown', (event) => {
+                showPopup(circle.description, event.data.global.x, event.data.global.y);
+            });
 
-            // Add to stage
             app.stage.addChild(graphics);
         });
     </script>
