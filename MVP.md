@@ -1,3 +1,16 @@
+# Completed so far
+- 3 total scenes with one overview map
+- simple timer that goes "game over" when end
+- inventory box with 3 boxes
+- dialog boxes
+
+## what is still needed/ can impletment 
+- multiple areas in one scene
+- changes base on timer
+- actual backgrounds and images
+
+
+
 ### Game Timer
 **Priority:** [P0]
 **Implementation Timeline:** [Day 1-2]
