@@ -2,107 +2,29 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Clickable Circles Game</title>
+    <title>Adventure Game</title>
+    <link rel="stylesheet" href="style.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/pixi.js/7.2.4/pixi.min.js"></script>
-    <style>
-        body { margin: 0; display: flex; justify-content: center; align-items: center; height: 100vh; }
-        canvas { border: 2px solid black; }
-        #popup {
-            position: absolute;
-            background: white;
-            border: 2px solid black;
-            padding: 20px;
-            display: none;
-            z-index: 100;
-            max-width: 300px;
-            text-align: center;
-        }
-        #popup-close {
-            position: absolute;
-            top: 10px;
-            right: 10px;
-            cursor: pointer;
-        }
-    </style>
 </head>
 <body>
+    <div id="map-button">Map</div>
+    <div id="timer">03:00</div>
+    <div id="inventory">
+        <div class="inventory-slot" data-slot="0"></div>
+        <div class="inventory-slot" data-slot="1"></div>
+        <div class="inventory-slot" data-slot="2"></div>
+    </div>
     <div id="gameCanvas"></div>
     <div id="popup">
         <span id="popup-close">✖</span>
         <div id="popup-content"></div>
+        <div id="dialog-choices"></div>
+    </div>
+    <div id="game-over">
+        <h2>Game Over!</h2>
+        <button id="reset-button">Reset Game</button>
     </div>
 
-    <script>
-        const app = new PIXI.Application({
-            width: 800,
-            height: 600,
-            backgroundColor: 0xf0f0f0
-        });
-        document.getElementById('gameCanvas').appendChild(app.view);
-
-        const popupElement = document.getElementById('popup');
-        const popupContent = document.getElementById('popup-content');
-        const popupClose = document.getElementById('popup-close');
-
-        function showPopup(message, x, y) {
-            popupContent.textContent = message;
-            popupElement.style.left = `${x + 10}px`;
-            popupElement.style.top = `${y + 10}px`;
-            popupElement.style.display = 'block';
-        }
-
-        function hidePopup() {
-            popupElement.style.display = 'none';
-        }
-
-        popupClose.addEventListener('click', hidePopup);
-
-        const circles = [
-            {
-                name: 'Ancient Ruins',
-                x: 250,
-                y: 200,
-                radius: 100,
-                color: 0xFF0000,
-                description: 'Crumbling stone structures hint at a long-lost civilization.'
-            },
-            {
-                name: 'Mystical Grove',
-                x: 550,
-                y: 300,
-                radius: 100,
-                color: 0x00FF00,
-                description: 'Ethereal trees sway with an otherworldly energy, magical essence lingering in the air.'
-            },
-            {
-                name: 'Crystal Cavern',
-                x: 400,
-                y: 450,
-                radius: 100,
-                color: 0x0000FF,
-                description: 'Glittering crystals reflect light in a mesmerizing underground chamber.'
-            }
-        ];
-
-        circles.forEach(circle => {
-            const graphics = new PIXI.Graphics();
-            
-            // Fully transparent circle with white border
-            graphics.lineStyle(3, 0xFFFFFF, 1);
-            graphics.beginFill(circle.color, 0);
-            graphics.drawCircle(circle.x, circle.y, circle.radius);
-            graphics.endFill();
-
-            graphics.interactive = true;
-            graphics.buttonMode = true;
-            graphics.hitArea = new PIXI.Circle(circle.x, circle.y, circle.radius);
-            
-            graphics.on('pointerdown', (event) => {
-                showPopup(circle.description, event.data.global.x, event.data.global.y);
-            });
-
-            app.stage.addChild(graphics);
-        });
-    </script>
+    <script src="game.js"></script>
 </body>
 </html>
