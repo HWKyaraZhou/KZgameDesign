@@ -236,7 +236,7 @@ const scenes = {
     ]
   },
   'village': {
-    backgroundColor: 0xB0E0E6, // Powder Blue
+    backgroundColor: 0xB0E0E6,
     circles: [
       {
         x: 250,
@@ -263,28 +263,46 @@ const scenes = {
           action: () => {
             const hasKey = gameState.inventory.includes('Key');
             const choices = [];
-
-            if (hasKey && !gameState.ruinsUnlocked) {
+        
+            // Already unlocked case
+            if (gameState.ruinsUnlocked) {
+              showPopup("The entrance to the ruins stands before you.", [
+                {
+                  text: 'Enter Ruins',
+                  action: () => {
+                    hidePopup();
+                    currentScene = 'ruins';
+                    renderScene('ruins');
+                  }
+                },
+                {
+                  text: 'Stay Here',
+                  action: hidePopup
+                }
+              ]);
+              return;
+            }
+        
+            // Has key but not yet unlocked
+            if (hasKey) {
               choices.push({
                 text: 'Use Key',
                 action: () => {
                   removeFromInventory('Key');
                   gameState.ruinsUnlocked = true;
-                  showPopup("You've unlocked 'The Hidden Ruins'!", [
-                    {
-                      text: 'Ok',
-                      action: hidePopup
-                    }
-                  ]);
+                  hidePopup();
+                  // Re-render the current scene to show the updated text
+                  renderScene('village');
                 }
               });
             }
-
+        
+            // Default case (no key, not unlocked)
             choices.push({
               text: 'Leave',
               action: hidePopup
             });
-
+        
             showPopup(hasKey ? 'There appears to be a keyhole...' : 'You notice a locked door.', choices);
           }
         }
@@ -361,7 +379,7 @@ const scenes = {
     ]
   },
   'map': {
-    backgroundColor: 0xD2B48C, // Tan
+    backgroundColor: 0xD2B48C,
     buttons: [
       {
         x: 250,
@@ -377,8 +395,6 @@ const scenes = {
       }
     ]
   }
-
-
 };
 
 // Scene Management
@@ -389,19 +405,7 @@ function renderScene(sceneName) {
   app.renderer.backgroundColor = scenes[sceneName].backgroundColor;
 
   if (sceneName === 'map') {
-      // Get the buttons for the current state
-      let currentButtons = [...scenes[sceneName].buttons];
-      if (gameState.ruinsUnlocked) {
-          currentButtons.push({
-              x: 400,
-              y: 400,
-              text: 'Hidden Ruins',
-              targetScene: 'ruins'
-          });
-      }
-
-      // Render map buttons using currentButtons
-      currentButtons.forEach(button => {
+      scenes[sceneName].buttons.forEach(button => {
           const graphics = new PIXI.Graphics();
           graphics.lineStyle(3, 0xFFFFFF, 1);
           graphics.beginFill(0x808080, 0.5);
@@ -430,7 +434,6 @@ function renderScene(sceneName) {
           app.stage.addChild(text);
       });
   } else {
-      // Render scene circles
       scenes[sceneName].circles.forEach(circle => {
           const graphics = new PIXI.Graphics();
           graphics.lineStyle(3, 0xFFFFFF, 1);
@@ -451,6 +454,22 @@ function renderScene(sceneName) {
           });
 
           app.stage.addChild(graphics);
+
+          // Add text for the ruins entrance if this is the door circle and it's unlocked
+          if (sceneName === 'village' && 
+              circle.specialInteraction?.type === 'door' && 
+              gameState.ruinsUnlocked) {
+              const text = new PIXI.Text('Ruins\nEntrance', {
+                  fontFamily: 'Arial',
+                  fontSize: 20,
+                  fill: 0xFFFFFF,
+                  align: 'center'
+              });
+              text.anchor.set(0.5);
+              text.x = circle.x;
+              text.y = circle.y;
+              app.stage.addChild(text);
+          }
       });
   }
 }
