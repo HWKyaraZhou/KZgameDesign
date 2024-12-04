@@ -3,9 +3,10 @@
 - simple timer that goes "game over" when end
 - inventory box with 3 boxes
 - dialog boxes
+- multiple areas in one scene
+- Pause feature
 
 ## what is still needed/ can impletment 
-- multiple areas in one scene
 - changes base on timer
 - actual backgrounds and images
 
