@@ -27,21 +27,26 @@ const gameState = {
   ruinsUnlocked: false
 };
 
+const pauseButton = document.getElementById('pause-button');
+const pauseOverlay = document.getElementById('pause-overlay');
+let isPaused = false;
+
 // Timer Management
 let timerInterval;
 
 function startTimer() {
   clearInterval(timerInterval);
-  gameState.timeLeft = 180;
   updateTimerDisplay();
 
   timerInterval = setInterval(() => {
-    gameState.timeLeft--;
-    updateTimerDisplay();
+      if (!isPaused) {
+          gameState.timeLeft--;
+          updateTimerDisplay();
 
-    if (gameState.timeLeft <= 0) {
-      gameOver();
-    }
+          if (gameState.timeLeft <= 0) {
+              gameOver();
+          }
+      }
   }, 1000);
 }
 
@@ -58,6 +63,23 @@ function updateTimerDisplay() {
   }
 }
 
+function togglePause() {
+  isPaused = !isPaused;
+  pauseOverlay.style.display = isPaused ? 'flex' : 'none';
+  
+  if (isPaused) {
+      clearInterval(timerInterval);
+      app.stage.interactive = false;
+      app.stage.interactiveChildren = false;
+  } else {
+      if (gameState.timeLeft > 0) {
+          startTimer();
+      }
+      app.stage.interactive = true;
+      app.stage.interactiveChildren = true;
+  }
+}
+
 function gameOver() {
   clearInterval(timerInterval);
   gameOverElement.style.display = 'block';
@@ -68,9 +90,12 @@ function resetGame() {
   clearInterval(timerInterval);
   gameOverElement.style.display = 'none';
   app.stage.interactive = true;
+  app.stage.interactiveChildren = true;
   gameState.inventory = [null, null, null];
   gameState.coinCollected = false;
-  gameState.ruinsUnlocked = false;  // Add this line
+  gameState.ruinsUnlocked = false;
+  isPaused = false;
+  pauseOverlay.style.display = 'none';
   updateInventoryDisplay();
   currentScene = 'small-house';
   renderScene(currentScene);
@@ -439,6 +464,17 @@ document.addEventListener('DOMContentLoaded', () => {
 mapButton.addEventListener('click', () => {
   renderScene('map');
   currentScene = 'map';
+});
+
+pauseButton.addEventListener('click', (e) => {
+  e.stopPropagation();
+  togglePause();
+});
+
+document.addEventListener('click', (e) => {
+  if (isPaused && e.target !== pauseButton) {
+      togglePause();
+  }
 });
 
 popupClose.addEventListener('click', hidePopup);
