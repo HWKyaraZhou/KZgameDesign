@@ -22,7 +22,7 @@ const resetButton = document.getElementById('reset-button');
 // Game state management
 const gameState = {
   coinCollected: false,
-  timeLeft: 180,
+  timeLeft: 3,
   inventory: [null, null, null],
   ruinsUnlocked: false
 };
@@ -87,20 +87,59 @@ function gameOver() {
 }
 
 function resetGame() {
-  clearInterval(timerInterval);
-  gameOverElement.style.display = 'none';
-  app.stage.interactive = true;
-  app.stage.interactiveChildren = true;
-  gameState.inventory = [null, null, null];
-  gameState.coinCollected = false;
-  gameState.ruinsUnlocked = false;
+  // Reset Timer
+  clearInterval(timerInterval); // Stop any existing timer
+  gameState.timeLeft = 180; // Reset to initial time (3 minutes)
+  updateTimerDisplay(); // Update the UI to show the reset time
+
+  // Reset Inventory
+  gameState.inventory = [null, null, null]; // Clear inventory
+  updateInventoryDisplay(); // Reflect changes in the UI
+
+  // Reset Collected Items and Progress
+  gameState.coinCollected = false; // Coin should be back
+  gameState.ruinsUnlocked = false; // Lock the ruins door again
+
+  // Reset Special Interactions (e.g., locked tables)
+  resetSpecialInteractions();
+
+  // Reset Scene to Initial State
+  currentScene = 'small-house'; // Return to the starting scene
+  renderScene(currentScene);
+
+  // Reset Pause and UI Elements
   isPaused = false;
   pauseOverlay.style.display = 'none';
   updateInventoryDisplay();
-  currentScene = 'small-house';
-  renderScene(currentScene);
-  startTimer();
+  startTimer(); // Start the timer again
+
+  // Reset Game Over UI (if it's visible)
+  gameOverElement.style.display = 'none';
+  app.stage.interactive = true;
+  app.stage.interactiveChildren = true;
 }
+
+function resetSpecialInteractions() {
+  // Reset all interactive objects to their initial states
+  for (const sceneName in scenes) {
+    const scene = scenes[sceneName];
+    
+    // Loop through all objects in the scene
+    scene.objects.forEach(object => {
+      if (object.specialInteraction) {
+        // Reset locked tables, doors, etc.
+        if (object.specialInteraction.type === 'table' || object.specialInteraction.type === 'door') {
+          // Re-lock the table/door, resetting any unlocked state
+          object.specialInteraction.locked = true; // Example of how to reset
+        }
+        
+        // Reset other types of interactions as needed
+        // You can add other types like 'villager', 'exit', etc. here and reset their states
+      }
+    });
+  }
+}
+
 
 // Inventory Management
 function addToInventory(item) {
