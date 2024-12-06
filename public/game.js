@@ -187,15 +187,13 @@ const scenes = {
       {
         x: 250,
         y: 200,
-        radius: 100,
-        color: 0xFF0000,
+        sprite: 'assets/shelf.jpg',
         description: 'A worn wooden shelf with dusty trinkets and faded photographs.'
       },
       {
         x: 550,
         y: 300,
-        radius: 100,
-        color: 0x00FF00,
+        sprite: 'assets/fireplace.jpg',
         description: 'An old fireplace with cold ashes and a single rusted poker.'
       },
       {
@@ -446,6 +444,10 @@ function renderScene(sceneName) {
     if (circle.sprite === 'assets/coin.png') {
       sprite.scale.set(0.1); // Scale coin to 10% of its original size
     }
+    else if (circle.sprite === 'assets/shelf.jpg' || circle.sprite == 'assets/fireplace.jpg') {
+      sprite.scale.set(0.2);
+    }
+
         sprite.interactive = true;
         sprite.buttonMode = true;
 
