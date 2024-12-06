@@ -27,21 +27,26 @@ const gameState = {
   ruinsUnlocked: false
 };
 
+const pauseButton = document.getElementById('pause-button');
+const pauseOverlay = document.getElementById('pause-overlay');
+let isPaused = false;
+
 // Timer Management
 let timerInterval;
 
 function startTimer() {
   clearInterval(timerInterval);
-  gameState.timeLeft = 180;
   updateTimerDisplay();
 
   timerInterval = setInterval(() => {
-    gameState.timeLeft--;
-    updateTimerDisplay();
+      if (!isPaused) {
+          gameState.timeLeft--;
+          updateTimerDisplay();
 
-    if (gameState.timeLeft <= 0) {
-      gameOver();
-    }
+          if (gameState.timeLeft <= 0) {
+              gameOver();
+          }
+      }
   }, 1000);
 }
 
@@ -58,6 +63,23 @@ function updateTimerDisplay() {
   }
 }
 
+function togglePause() {
+  isPaused = !isPaused;
+  pauseOverlay.style.display = isPaused ? 'flex' : 'none';
+  
+  if (isPaused) {
+      clearInterval(timerInterval);
+      app.stage.interactive = false;
+      app.stage.interactiveChildren = false;
+  } else {
+      if (gameState.timeLeft > 0) {
+          startTimer();
+      }
+      app.stage.interactive = true;
+      app.stage.interactiveChildren = true;
+  }
+}
+
 function gameOver() {
   clearInterval(timerInterval);
   gameOverElement.style.display = 'block';
@@ -68,9 +90,12 @@ function resetGame() {
   clearInterval(timerInterval);
   gameOverElement.style.display = 'none';
   app.stage.interactive = true;
+  app.stage.interactiveChildren = true;
   gameState.inventory = [null, null, null];
   gameState.coinCollected = false;
-  gameState.ruinsUnlocked = false;  // Add this line
+  gameState.ruinsUnlocked = false;
+  isPaused = false;
+  pauseOverlay.style.display = 'none';
   updateInventoryDisplay();
   currentScene = 'small-house';
   renderScene(currentScene);
@@ -211,7 +236,7 @@ const scenes = {
     ]
   },
   'village': {
-    backgroundColor: 0xB0E0E6, // Powder Blue
+    backgroundColor: 0xB0E0E6,
     circles: [
       {
         x: 250,
@@ -238,28 +263,46 @@ const scenes = {
           action: () => {
             const hasKey = gameState.inventory.includes('Key');
             const choices = [];
-
-            if (hasKey && !gameState.ruinsUnlocked) {
+        
+            // Already unlocked case
+            if (gameState.ruinsUnlocked) {
+              showPopup("The entrance to the ruins stands before you.", [
+                {
+                  text: 'Enter Ruins',
+                  action: () => {
+                    hidePopup();
+                    currentScene = 'ruins';
+                    renderScene('ruins');
+                  }
+                },
+                {
+                  text: 'Stay Here',
+                  action: hidePopup
+                }
+              ]);
+              return;
+            }
+        
+            // Has key but not yet unlocked
+            if (hasKey) {
               choices.push({
                 text: 'Use Key',
                 action: () => {
                   removeFromInventory('Key');
                   gameState.ruinsUnlocked = true;
-                  showPopup("You've unlocked 'The Hidden Ruins'!", [
-                    {
-                      text: 'Ok',
-                      action: hidePopup
-                    }
-                  ]);
+                  hidePopup();
+                  // Re-render the current scene to show the updated text
+                  renderScene('village');
                 }
               });
             }
-
+        
+            // Default case (no key, not unlocked)
             choices.push({
               text: 'Leave',
               action: hidePopup
             });
-
+        
             showPopup(hasKey ? 'There appears to be a keyhole...' : 'You notice a locked door.', choices);
           }
         }
@@ -336,7 +379,7 @@ const scenes = {
     ]
   },
   'map': {
-    backgroundColor: 0xD2B48C, // Tan
+    backgroundColor: 0xD2B48C,
     buttons: [
       {
         x: 250,
@@ -352,8 +395,6 @@ const scenes = {
       }
     ]
   }
-
-
 };
 
 // Scene Management
@@ -364,19 +405,7 @@ function renderScene(sceneName) {
   app.renderer.backgroundColor = scenes[sceneName].backgroundColor;
 
   if (sceneName === 'map') {
-      // Get the buttons for the current state
-      let currentButtons = [...scenes[sceneName].buttons];
-      if (gameState.ruinsUnlocked) {
-          currentButtons.push({
-              x: 400,
-              y: 400,
-              text: 'Hidden Ruins',
-              targetScene: 'ruins'
-          });
-      }
-
-      // Render map buttons using currentButtons
-      currentButtons.forEach(button => {
+      scenes[sceneName].buttons.forEach(button => {
           const graphics = new PIXI.Graphics();
           graphics.lineStyle(3, 0xFFFFFF, 1);
           graphics.beginFill(0x808080, 0.5);
@@ -405,7 +434,6 @@ function renderScene(sceneName) {
           app.stage.addChild(text);
       });
   } else {
-      // Render scene circles
       scenes[sceneName].circles.forEach(circle => {
           const graphics = new PIXI.Graphics();
           graphics.lineStyle(3, 0xFFFFFF, 1);
@@ -426,6 +454,22 @@ function renderScene(sceneName) {
           });
 
           app.stage.addChild(graphics);
+
+          // Add text for the ruins entrance if this is the door circle and it's unlocked
+          if (sceneName === 'village' && 
+              circle.specialInteraction?.type === 'door' && 
+              gameState.ruinsUnlocked) {
+              const text = new PIXI.Text('Ruins\nEntrance', {
+                  fontFamily: 'Arial',
+                  fontSize: 20,
+                  fill: 0xFFFFFF,
+                  align: 'center'
+              });
+              text.anchor.set(0.5);
+              text.x = circle.x;
+              text.y = circle.y;
+              app.stage.addChild(text);
+          }
       });
   }
 }
@@ -439,6 +483,17 @@ document.addEventListener('DOMContentLoaded', () => {
 mapButton.addEventListener('click', () => {
   renderScene('map');
   currentScene = 'map';
+});
+
+pauseButton.addEventListener('click', (e) => {
+  e.stopPropagation();
+  togglePause();
+});
+
+document.addEventListener('click', (e) => {
+  if (isPaused && e.target !== pauseButton) {
+      togglePause();
+  }
 });
 
 popupClose.addEventListener('click', hidePopup);
