@@ -442,6 +442,8 @@ function renderScene(sceneName) {
         sprite.x = circle.x;
         sprite.y = circle.y;
         sprite.anchor.set(0.5);  // Center the sprite
+        // Scale down the sprite
+        sprite.scale.set(0.1);  // 10% of its original size
         sprite.interactive = true;
         sprite.buttonMode = true;
 
