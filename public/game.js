@@ -22,7 +22,7 @@ const resetButton = document.getElementById('reset-button');
 // Game state management
 const gameState = {
   coinCollected: false,
-  timeLeft: 180,
+  timeLeft: 3,
   inventory: [null, null, null],
   ruinsUnlocked: false
 };
@@ -87,20 +87,59 @@ function gameOver() {
 }
 
 function resetGame() {
-  clearInterval(timerInterval);
-  gameOverElement.style.display = 'none';
-  app.stage.interactive = true;
-  app.stage.interactiveChildren = true;
-  gameState.inventory = [null, null, null];
-  gameState.coinCollected = false;
-  gameState.ruinsUnlocked = false;
+  // Reset Timer
+  clearInterval(timerInterval); // Stop any existing timer
+  gameState.timeLeft = 180; // Reset to initial time (3 minutes)
+  updateTimerDisplay(); // Update the UI to show the reset time
+
+  // Reset Inventory
+  gameState.inventory = [null, null, null]; // Clear inventory
+  updateInventoryDisplay(); // Reflect changes in the UI
+
+  // Reset Collected Items and Progress
+  gameState.coinCollected = false; // Coin should be back
+  gameState.ruinsUnlocked = false; // Lock the ruins door again
+
+  // Reset Special Interactions (e.g., locked tables)
+  resetSpecialInteractions();
+
+  // Reset Scene to Initial State
+  currentScene = 'small-house'; // Return to the starting scene
+  renderScene(currentScene);
+
+  // Reset Pause and UI Elements
   isPaused = false;
   pauseOverlay.style.display = 'none';
   updateInventoryDisplay();
-  currentScene = 'small-house';
-  renderScene(currentScene);
-  startTimer();
+  startTimer(); // Start the timer again
+
+  // Reset Game Over UI (if it's visible)
+  gameOverElement.style.display = 'none';
+  app.stage.interactive = true;
+  app.stage.interactiveChildren = true;
 }
+
+function resetSpecialInteractions() {
+  // Reset all interactive objects to their initial states
+  for (const sceneName in scenes) {
+    const scene = scenes[sceneName];
+    
+    // Loop through all objects in the scene
+    scene.objects.forEach(object => {
+      if (object.specialInteraction) {
+        // Reset locked tables, doors, etc.
+        if (object.specialInteraction.type === 'table' || object.specialInteraction.type === 'door') {
+          // Re-lock the table/door, resetting any unlocked state
+          object.specialInteraction.locked = true; // Example of how to reset
+        }
+        
+        // Reset other types of interactions as needed
+        // You can add other types like 'villager', 'exit', etc. here and reset their states
+      }
+    });
+  }
+}
+
 
 // Inventory Management
 function addToInventory(item) {
@@ -151,51 +190,49 @@ function hidePopup() {
 }
 
 // Scene Definitions
+
 const scenes = {
   'small-house': {
     backgroundColor: 0xFDF5E6,
     circles: [
       {
-        x: 400,
-        y: 450,
-        radius: 100,
-        color: 0x0000FF,
-        description: 'A creaky rocking chair facing the window, casting long shadows.',
-        specialInteraction: {
-          type: 'floor',
-          action: () => {
-            if (!gameState.coinCollected) {
-              showPopup('You found a coin!', [
-                {
-                  text: 'Pick up',
-                  action: () => {
-                    if (addToInventory('Coin')) {
-                      gameState.coinCollected = true;
-                      hidePopup();
-                    } else {
-                      showPopup('Inventory is full!');
+      x: 400,
+          y: 450,
+          sprite: 'assets/coin.png',  // Reference to an image in assets folder
+          description: 'A shiny coin on the floor.',
+          specialInteraction: {
+            type: 'floor',
+            action: () => {
+              if (!gameState.coinCollected) {
+                showPopup('You found a coin!', [
+                  {
+                    text: 'Pick up',
+                    action: () => {
+                      if (addToInventory('Coin')) {
+                        gameState.coinCollected = true;
+                        hidePopup();
+                      } else {
+                        showPopup('Inventory is full!');
+                      }
                     }
                   }
-                }
-              ]);
-            } else {
-              showPopup('You search the area again but find nothing new.');
+                ]);
+              } else {
+                showPopup('You search the area again but find nothing new.');
+              }
             }
           }
-        }
-      },
+        },
       {
         x: 250,
         y: 200,
-        radius: 100,
-        color: 0xFF0000,
+        sprite: 'assets/shelf.jpg',
         description: 'A worn wooden shelf with dusty trinkets and faded photographs.'
       },
       {
         x: 550,
         y: 300,
-        radius: 100,
-        color: 0x00FF00,
+        sprite: 'assets/fireplace.jpg',
         description: 'An old fireplace with cold ashes and a single rusted poker.'
       },
       {
@@ -401,78 +438,94 @@ const scenes = {
 let currentScene = 'small-house';
 
 function renderScene(sceneName) {
-  app.stage.removeChildren();
+  app.stage.removeChildren();  // Clear previous scene
+
+  // Set background color or texture for the scene
   app.renderer.backgroundColor = scenes[sceneName].backgroundColor;
 
   if (sceneName === 'map') {
-      scenes[sceneName].buttons.forEach(button => {
-          const graphics = new PIXI.Graphics();
-          graphics.lineStyle(3, 0xFFFFFF, 1);
-          graphics.beginFill(0x808080, 0.5);
-          graphics.drawCircle(button.x, button.y, 100);
-          graphics.endFill();
+    scenes[sceneName].buttons.forEach(button => {
+      const graphics = new PIXI.Graphics();
+      graphics.lineStyle(3, 0xFFFFFF, 1);
+      graphics.beginFill(0x808080, 0.5);
+      graphics.drawCircle(button.x, button.y, 100);
+      graphics.endFill();
 
-          const text = new PIXI.Text(button.text, {
-              fontFamily: 'Arial',
-              fontSize: 24,
-              fill: 0xFFFFFF
-          });
-          text.anchor.set(0.5);
-          text.x = button.x;
-          text.y = button.y;
-
-          graphics.interactive = true;
-          graphics.buttonMode = true;
-          graphics.hitArea = new PIXI.Circle(button.x, button.y, 100);
-
-          graphics.on('pointerdown', () => {
-              renderScene(button.targetScene);
-              currentScene = button.targetScene;
-          });
-
-          app.stage.addChild(graphics);
-          app.stage.addChild(text);
+      const text = new PIXI.Text(button.text, {
+        fontFamily: 'Arial',
+        fontSize: 24,
+        fill: 0xFFFFFF
       });
+      text.anchor.set(0.5);
+      text.x = button.x;
+      text.y = button.y;
+
+      graphics.interactive = true;
+      graphics.buttonMode = true;
+      graphics.hitArea = new PIXI.Circle(button.x, button.y, 100);
+
+      graphics.on('pointerdown', () => {
+        renderScene(button.targetScene);
+      });
+
+      app.stage.addChild(graphics);
+      app.stage.addChild(text);
+    });
   } else {
-      scenes[sceneName].circles.forEach(circle => {
-          const graphics = new PIXI.Graphics();
-          graphics.lineStyle(3, 0xFFFFFF, 1);
-          graphics.beginFill(circle.color, 0);
-          graphics.drawCircle(circle.x, circle.y, circle.radius);
-          graphics.endFill();
+    scenes[sceneName].circles.forEach(circle => {
+      if (circle.sprite) {
+        // Use sprite (image) instead of drawing a circle
+        const sprite = PIXI.Sprite.from(circle.sprite);  // Load image as sprite
+        sprite.x = circle.x;
+        sprite.y = circle.y;
+        sprite.anchor.set(0.5);  // Center the sprite
+        // Apply individual scaling
+    if (circle.sprite === 'assets/coin.png') {
+      sprite.scale.set(0.1); // Scale coin to 10% of its original size
+    }
+    else if (circle.sprite === 'assets/shelf.jpg' || circle.sprite == 'assets/fireplace.jpg') {
+      sprite.scale.set(0.2);
+    }
 
-          graphics.interactive = true;
-          graphics.buttonMode = true;
-          graphics.hitArea = new PIXI.Circle(circle.x, circle.y, circle.radius);
+        sprite.interactive = true;
+        sprite.buttonMode = true;
 
-          graphics.on('pointerdown', (event) => {
-              if (circle.specialInteraction) {
-                  circle.specialInteraction.action();
-              } else {
-                  showPopup(circle.description);
-              }
-          });
-
-          app.stage.addChild(graphics);
-
-          // Add text for the ruins entrance if this is the door circle and it's unlocked
-          if (sceneName === 'village' && 
-              circle.specialInteraction?.type === 'door' && 
-              gameState.ruinsUnlocked) {
-              const text = new PIXI.Text('Ruins\nEntrance', {
-                  fontFamily: 'Arial',
-                  fontSize: 20,
-                  fill: 0xFFFFFF,
-                  align: 'center'
-              });
-              text.anchor.set(0.5);
-              text.x = circle.x;
-              text.y = circle.y;
-              app.stage.addChild(text);
+        // Add interactivity
+        sprite.on('pointerdown', (event) => {
+          if (circle.specialInteraction) {
+            circle.specialInteraction.action();
+          } else {
+            showPopup(circle.description);
           }
-      });
+        });
+
+        app.stage.addChild(sprite);
+      } else {
+        // Fallback: Draw a circle (for any cases where no sprite is specified)
+        const graphics = new PIXI.Graphics();
+        graphics.lineStyle(3, 0xFFFFFF, 1);
+        graphics.beginFill(circle.color, 0);
+        graphics.drawCircle(circle.x, circle.y, circle.radius);
+        graphics.endFill();
+
+        graphics.interactive = true;
+        graphics.buttonMode = true;
+        graphics.hitArea = new PIXI.Circle(circle.x, circle.y, circle.radius);
+
+        graphics.on('pointerdown', (event) => {
+          if (circle.specialInteraction) {
+            circle.specialInteraction.action();
+          } else {
+            showPopup(circle.description);
+          }
+        });
+
+        app.stage.addChild(graphics);
+      }
+    });
   }
 }
+
 
 // Event Listeners
 document.addEventListener('DOMContentLoaded', () => {
